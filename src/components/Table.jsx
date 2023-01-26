@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, Outlet, useMatch, useResolvedPath } from "react-router-dom";
+import { Link, useParams, useMatch, useResolvedPath } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Table() {
+  const { id } = useParams();
   const navigation = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [mahasiswa, setMahasiswa] = new useState([]);
@@ -20,6 +21,15 @@ function Table() {
     );
   }, []);
 
+  const getData = () => {
+    axios("https://63c821c15c0760f69ac5fa54.mockapi.io/mahasiswa").then(
+      (res) => {
+        setMahasiswa(res.data);
+        setIsLoading(false);
+      }
+    );
+  }
+
   const handleDetail = (id) => {
     navigation(`detail/${id}`);
   };
@@ -30,9 +40,16 @@ function Table() {
       return item.toLowerCase().indexOf(filterList.toLowerCase()) !== -1;
     });
     mahasiswa(updatedList)
-    
-  
   };
+
+  const handleDelete = (id) => {
+    axios.delete(`https://63c821c15c0760f69ac5fa54.mockapi.io/mahasiswa/${id}`)
+    .then(() => {
+      getData();
+    })
+    
+    
+  }
 
 
 
@@ -85,19 +102,18 @@ function Table() {
           <table className="table">
             <thead>
               <tr>
-                <th scope="col-1">Nomor</th>
                 <th scope="col-2">Nama</th>
                 <th scope="col-2">Prodi</th>
                 <th scope="col-2">Semester</th>
                 <th scope="col-1">Kelas</th>
                 <th scope="col-2">Tahun Angkatan</th>
-                <th scope="col-2">Edit</th>
+                <th scope="col-2">Detail</th>
+                <th scope="col-2">Hapus</th>
               </tr>
             </thead>
             <tbody>
               {mahasiswa.map((item) => (
                 <tr key={item.id}>
-                  <th scope="row">1</th>
                   <td>{item.name}</td>
                   <td>{item.prodi}</td>
                   <td>{item.semester}</td>
@@ -111,6 +127,8 @@ function Table() {
                       Detail
                     </button>
                   </td>
+                  <td>
+                    <button onClick={() => handleDelete(item.id)} class="btn btn-danger">Hapus</button></td>
                 </tr>
               ))}
             </tbody>
