@@ -46,6 +46,7 @@ function Table() {
     axios.delete(`https://63c821c15c0760f69ac5fa54.mockapi.io/mahasiswa/${id}`)
     .then(() => {
       getData();
+      alert("Berhasil dihapus")
     })
     
     
